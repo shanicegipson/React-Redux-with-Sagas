@@ -18,6 +18,7 @@ import { takeEvery, put } from 'redux-saga/effects';
 // Your saga should listen for the action type of `GET_ZOO_ANIMALS`
 function* rootSaga() {
     yield takeEvery('GET_ZOO_ANIMALS', getAnimals);
+    yield takeEvery('REMOVE_ANIMAL', deleteAnimal);
 
 }
 
@@ -25,10 +26,21 @@ function* getAnimals() {
     try {
         const response = yield axios.get('/zoo');
         yield put({ type: 'SET_ZOO_ANIMALS', payload:response.data});
-        console.log(response.data, 'GETTING ANIMALS');
     }
     catch(err) {
         console.log('Error in GET', err)
+    }
+}
+
+function* deleteAnimal(action) {
+    try {
+        yield axios.delete('/zoo/'+action.payload);
+        yield put({ type: 'GET_ZOO_ANIMALS'});
+        console.log(action.payload);
+
+    }
+    catch(err) {
+        console.log('Error in DELETE', err)
     }
 }
 
